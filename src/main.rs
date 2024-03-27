@@ -1,5 +1,3 @@
-use std::collections::BTreeMap;
-
 use ndarray::prelude::*;
 use ndarray_rand::rand_distr::Uniform;
 use ndarray_rand::RandomExt;
@@ -11,6 +9,8 @@ use ndarray::iter::LanesIter;
 
 use clap::Parser;
 
+use fxhash::FxHashMap;
+
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
@@ -19,10 +19,10 @@ struct Args {
     iterations: u64,
 }
 
-fn runs_at_least(board: &Array<u8, Ix2>, at_least: u64) -> BTreeMap<u64, u64> {
-    let mut runs = BTreeMap::new();
+fn runs_at_least(board: &Array<u8, Ix2>, at_least: u64) -> FxHashMap<u64, u64> {
+    let mut runs = FxHashMap::default();
 
-    fn process_axis(lanes: &mut LanesIter<u8, Ix1>, runs: &mut BTreeMap<u64, u64>, at_least: u64) {
+    fn process_axis(lanes: &mut LanesIter<u8, Ix1>, runs: &mut FxHashMap<u64, u64>, at_least: u64) {
         for lane in lanes {
             let mut iter = lane.iter();
             let mut run: u64 = 1;
@@ -51,7 +51,7 @@ fn runs_at_least(board: &Array<u8, Ix2>, at_least: u64) -> BTreeMap<u64, u64> {
     runs
 }
 
-fn score_runs(runs: &BTreeMap<u64, u64>) -> u64 {
+fn score_runs(runs: &FxHashMap<u64, u64>) -> u64 {
     runs.iter().map(|(run, count)| (run - 2) * count).sum()
 }
 
@@ -71,7 +71,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             (score, largest_run)
         })
         .fold(
-            || (BTreeMap::<u64, u64>::new(), BTreeMap::<u64, u64>::new()),
+            || (FxHashMap::<u64, u64>::default(), FxHashMap::<u64, u64>::default()),
             |(mut scores, mut largest_runs), (score, largest_run)| {
                 scores.entry(score).and_modify(|e| *e += 1).or_insert(1);
                 if let Some(largest_run) = largest_run {
@@ -84,7 +84,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             },
         )
         .reduce(
-            || (BTreeMap::new(), BTreeMap::new()),
+            || (FxHashMap::default(), FxHashMap::default()),
             |mut acc, cur| {
                 cur.0.iter().for_each(|(k, v)| {
                     acc.0.entry(*k).and_modify(|e| *e += v).or_insert(*v);
@@ -96,13 +96,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             },
         );
 
-    for (score, count) in scores.iter() {
+    let mut scores_keys: Vec<_> = scores.keys().collect();
+    scores_keys.sort();
+    for score in scores_keys {
+        let count = scores.get(score).unwrap();
+
         println!(
             "Score: {score} Count: {count} ({:.2}%)",
             (count.to_owned() as f64) * 100f64 / (iterations as f64)
         );
     }
-    for (run, count) in largest_runs.iter() {
+
+    let mut largest_runs_keys: Vec<_> = largest_runs.keys().collect();
+    largest_runs_keys.sort();
+    for run in largest_runs_keys {
+        let count = largest_runs.get(run).unwrap();
+
         println!(
             "Run: {run} Count: {count} ({}%)",
             (count.to_owned() as f64) * 100f64 / (iterations as f64)
