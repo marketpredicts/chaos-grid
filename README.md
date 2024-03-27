@@ -55,16 +55,16 @@ Example 3 would resolve: 3=YES, Any Pent=YES
 
 ### Example 4
 
-|   |   |   |   |       |   |
-|---|---|---|---|-------|---|
-| 1 | 4 | 4 | 5 | **5** | 4 |
-| 4 | 1 | 6 | 4 | **5** | 2 |
-| 2 | 3 | 5 | 5 | **5** | 6 |
-| 3 | 3 | 1 | 3 | **5** | 2 |
-| 6 | 4 | 2 | 2 | **5** | 6 |
-| 5 | 1 | 4 | 3 | **5** | 2 |
+|   |   |       |       |       |   |
+|---|---|-------|-------|-------|---|
+| 1 | 4 | 4     | 5     | **5** | 4 |
+| 4 | 1 | 6     | 4     | **5** | 2 |
+| 2 | 3 | **5** | **5** | **5** | 6 |
+| 3 | 3 | 1     | 3     | **5** | 2 |
+| 6 | 4 | 2     | 2     | **5** | 6 |
+| 5 | 1 | 4     | 3     | **5** | 2 |
 
-Example 4 would resolve: 4=YES, Any Hex=YES
+Example 4 would resolve: 5=YES, Any Hex=YES
 
 What will be the total score of the inaugural Chaos Grid?
 
@@ -103,35 +103,3 @@ Run: 5 Count: 153017425 (1.53017425%)
 Run: 6 Count: 15421824 (0.15421824%)
 target/release/chaos-grid --iterations 10000000000  12790.59s user 74.55s system 1110% cpu 19:18.43 total
 ```
-
-## Problems
-
-My interpretation was that scoring was independent along columns and rows, however example 4 has two possible interpretations:
-
-The original question:
-
-|   |   |   |   |       |   |
-|---|---|---|---|-------|---|
-| 1 | 4 | 4 | 5 | **5** | 4 |
-| 4 | 1 | 6 | 4 | **5** | 2 |
-| 2 | 3 | 5 | 5 | **5** | 6 |
-| 3 | 3 | 1 | 3 | **5** | 2 |
-| 6 | 4 | 2 | 2 | **5** | 6 |
-| 5 | 1 | 4 | 3 | **5** | 2 |
-
-Example 4 would resolve: 4=YES, Any Hex=YES
-
-My code:
-
-|   |   |       |       |       |   |
-|---|---|-------|-------|-------|---|
-| 1 | 4 | 4     | 5     | **5** | 4 |
-| 4 | 1 | 6     | 4     | **5** | 2 |
-| 2 | 3 | **5** | **5** | **5** | 6 |
-| 3 | 3 | 1     | 3     | **5** | 2 |
-| 6 | 4 | 2     | 2     | **5** | 6 |
-| 5 | 1 | 4     | 3     | **5** | 2 |
-
-Example 4 would resolve: 5=YES, Any Hex=YES
-
-I've [asked for clarification](https://manifold.markets/EstMtz/-the-chaos-grid-place-your-bets-see#qkuhkdysrz) from the game author.

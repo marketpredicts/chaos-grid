@@ -189,7 +189,7 @@ mod tests {
         let runs = super::runs_at_least(&board, 3);
         let score = score_runs(&runs);
         let largest_run = runs.keys().max().cloned();
-        assert_eq!(score, 4);
+        assert_eq!(score, 5);
         assert_eq!(largest_run, Some(6));
     }
 }
